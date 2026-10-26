@@ -39,13 +39,12 @@ final case class GpgSigner(
       (p, true)
     }
 
-    sign0(path, temporary, content)
+    sign0(path, temporary)
   }
 
   private def sign0(
     path: Path,
-    temporary: Boolean,
-    content: Content
+    temporary: Boolean
   ): Either[String, String] = {
     // inspired by https://github.com/jodersky/sbt-gpg/blob/853e608120eac830068bbb121b486b7cf06fc4b9/src/main/scala/Gpg.scala
     val dest = Files.createTempFile(

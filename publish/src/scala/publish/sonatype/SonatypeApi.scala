@@ -84,7 +84,7 @@ final case class SonatypeApi(
 
   def decodeListProfilesResponse(json: RawJson): Either[Exception, Seq[SonatypeApi.Profile]] =
     try {
-      val l = readFromArray(json.value)(Profiles.Profile.listCodec)
+      val l = readFromArray(json.value)(using Profiles.Profile.listCodec)
       Right(l.map(_.profile))
     }
     catch {
@@ -108,7 +108,7 @@ final case class SonatypeApi(
 
   def decodeListProfileRepositoriesResponse(json: RawJson)
     : Either[Exception, Seq[SonatypeApi.Repository]] =
-    try Right(readFromArray(json.value)(RepositoryResponse.listCodec).map(_.repository))
+    try Right(readFromArray(json.value)(using RepositoryResponse.listCodec).map(_.repository))
     catch {
       case e: JsonReaderException =>
         Left(new Exception("Error decoding response", e))
@@ -198,7 +198,7 @@ final case class SonatypeApi(
       using SonatypeApi.jsonListCodec
     )
       .filter { json =>
-        val nameOpt = readFromArray(json.value)(SonatypeApi.MaybeHasName.codec).name
+        val nameOpt = readFromArray(json.value)(using SonatypeApi.MaybeHasName.codec).name
         nameOpt.contains(action)
       }
       .lastOption
@@ -274,7 +274,7 @@ object SonatypeApi {
 
   def activityErrored(activity: RawJson): Either[List[String], Unit] =
     try {
-      val a      = readFromArray(activity.value)(Activity.codec)
+      val a      = readFromArray(activity.value)(using Activity.codec)
       val errors = a.events
         .filter(_.severity >= 1)
         .map(e => e.propertiesMap.getOrElse("failureMessage", e.name))
@@ -288,7 +288,7 @@ object SonatypeApi {
   // same kind of check as sbt-sonatype
   def repositoryClosed(activity: RawJson, repoId: String): Boolean =
     try {
-      val a = readFromArray(activity.value)(Activity.codec)
+      val a = readFromArray(activity.value)(using Activity.codec)
       a.events.exists { e =>
         e.name == "repositoryClosed" &&
         e.properties.exists(p => p.name == "id" && p.value == repoId)
@@ -300,7 +300,7 @@ object SonatypeApi {
     }
   def repositoryPromoted(activity: RawJson, repoId: String): Boolean =
     try {
-      val a = readFromArray(activity.value)(Activity.codec)
+      val a = readFromArray(activity.value)(using Activity.codec)
       a.events.exists { e =>
         e.name == "repositoryReleased" &&
         e.properties.exists(p => p.name == "id" && p.value == repoId)
@@ -382,14 +382,6 @@ object SonatypeApi {
     implicit val codec: JsonValueCodec[PromoteRequest] = JsonCodecMaker.make
   }
 
-  private final case class PromoteResponse(
-    stagedRepositoryIds: Seq[String],
-    description: String,
-    transitioning: Boolean
-  )
-  private object PromoteResponse {
-    val codec: JsonValueCodec[PromoteResponse] = JsonCodecMaker.make
-  }
   private final case class StartResponse(stagedRepositoryId: String)
   private object StartResponse {
     val codec: JsonValueCodec[StartResponse] = JsonCodecMaker.make

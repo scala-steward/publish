@@ -6,6 +6,7 @@ import coursier.cache.internal.{ConsoleDim, ThreadUtil}
 import java.io.*
 import java.util.concurrent.{Executors, ScheduledFuture, TimeUnit}
 
+import scala.compiletime.uninitialized
 import scala.util.control.NonFatal
 
 /** Displays the last `bufferSize` lines of `is` in the terminal via `out`, updating them along
@@ -18,8 +19,8 @@ final class OutputFrame(
   preamble: Seq[String],
   postamble: Seq[String]
 ) {
-  private[this] val lines              = new OutputFrame.Lines(bufferSize)
-  private[this] val inCaseOfErrorLines = new OutputFrame.Lines(100) // don't hard-code size?
+  private val lines              = new OutputFrame.Lines(bufferSize)
+  private val inCaseOfErrorLines = new OutputFrame.Lines(100) // don't hard-code size?
 
   private val readThread: Thread =
     new Thread("output-frame-read") {
@@ -155,8 +156,8 @@ final class OutputFrame(
 object OutputFrame {
   private final class Lines(bufferSize: Int) {
 
-    @volatile private[this] var first: Line = _
-    @volatile private[this] var last: Line  = _
+    @volatile private var first: Line = uninitialized
+    @volatile private var last: Line  = uninitialized
 
     // should not be called multiple times in parallel
     def append(value: String): Unit = {
@@ -196,7 +197,7 @@ object OutputFrame {
   }
 
   private final class Line(val value: String, val index: Long) {
-    @volatile private[this] var next0: Line = _
+    @volatile private var next0: Line = uninitialized
 
     def setNext(next: Line): Unit = {
       assert(this.next0 eq null)

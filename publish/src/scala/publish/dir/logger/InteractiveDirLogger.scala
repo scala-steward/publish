@@ -3,9 +3,10 @@ package scala.publish.dir.logger
 import java.io.{OutputStream, OutputStreamWriter}
 import java.nio.file.Path
 
+import scala.annotation.unused
 import scala.publish.logging.ProgressLogger
 
-final class InteractiveDirLogger(out: OutputStreamWriter, dirName: String, verbosity: Int)
+final class InteractiveDirLogger(out: OutputStreamWriter, dirName: String, @unused verbosity: Int)
     extends DirLogger {
 
   private val underlying = new ProgressLogger[String](
@@ -31,6 +32,6 @@ final class InteractiveDirLogger(out: OutputStreamWriter, dirName: String, verbo
 }
 
 object InteractiveDirLogger {
-  def create(out: OutputStream, dirName: String, verbosity: Int): DirLogger =
+  def create(out: OutputStream, dirName: String, @unused verbosity: Int): DirLogger =
     new InteractiveDirLogger(new OutputStreamWriter(out), dirName, verbosity)
 }

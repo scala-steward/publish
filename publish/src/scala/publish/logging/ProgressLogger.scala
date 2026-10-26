@@ -7,6 +7,7 @@ import java.io.Writer
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.{ConcurrentHashMap, Executors, ScheduledFuture, TimeUnit}
 
+import scala.annotation.unused
 import scala.jdk.CollectionConverters.*
 
 /** Displays the progress of some task on a single line.
@@ -40,7 +41,7 @@ final class ProgressLogger[T](
   }
 
   // from https://github.com/mitsuhiko/indicatif/blob/0c3c0b5cbe666402ed7d3b9366c346f6eb0228fe/src/progress.rs#L202
-  private[this] val tickers = "⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈ "
+  private val tickers = "⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈ "
 
   private def update(scrollUp: Boolean = true): Runnable =
     () => {
@@ -116,7 +117,7 @@ final class ProgressLogger[T](
     assert(b.isLeft)
     onChange()
   }
-  def processed(url: String, id: T, errored: Boolean): Unit = {
+  def processed(url: String, id: T, @unused errored: Boolean): Unit = {
     val s = states.get(id)
     assert(s ne null, s"Found ${states.asScala.iterator.map(_._1).toList}, not $id")
     val b = s.processed.put(url, Right(()))

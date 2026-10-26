@@ -4,6 +4,7 @@ import java.io.{File, OutputStreamWriter}
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Path}
 
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters.*
 import scala.publish.logging.OutputFrame
@@ -12,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 final class Sbt(
   directory: File,
   plugin: File,
-  ec: ExecutionContext,
+  @unused ec: ExecutionContext,
   outputFrameSizeOpt: Option[Int],
   verbosity: Int,
   interactive: Boolean = true
@@ -66,7 +67,7 @@ final class Sbt(
     }
   }
 
-  def publishTo(dir: File, projectsOpt: Option[Seq[String]] = None): Future[Unit] = {
+  def publishTo(dir: File, @unused projectsOpt: Option[Seq[String]] = None): Future[Unit] = {
     if verbosity >= 1 then
       Console.err.println(
         s"Publishing sbt project ${directory.getAbsolutePath} to temporary directory $dir"

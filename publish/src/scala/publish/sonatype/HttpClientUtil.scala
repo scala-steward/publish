@@ -16,7 +16,7 @@ private[sonatype] final case class HttpClientUtil(
   verbosity: Int
 ) {
 
-  private def request(url: String, post: Option[Array[Byte]] = None, isJson: Boolean = false) = {
+  private def request(url: String, post: Option[Array[Byte]], isJson: Boolean) = {
     val uri = Uri.parse(url) match {
       case Left(_)     => ???
       case Right(uri0) => uri0

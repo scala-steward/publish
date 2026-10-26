@@ -6,6 +6,7 @@ import coursier.util.Task
 import java.io.PrintStream
 import java.util.concurrent.ScheduledExecutorService
 
+import scala.annotation.unused
 import scala.concurrent.duration.DurationInt
 import scala.publish.fileset.FileSet
 import scala.publish.sonatype.SonatypeApi
@@ -14,11 +15,11 @@ import scala.publish.sonatype.logger.{BatchSonatypeLogger, InteractiveSonatypeLo
 trait Hooks {
   type T >: Null
 
-  def beforeUpload(fileSet: FileSet, isSnapshot: Boolean): Task[T] =
+  def beforeUpload(@unused fileSet: FileSet, @unused isSnapshot: Boolean): Task[T] =
     Task.point(null)
   def repository(t: T, repo: PublishRepository, isSnapshot: Boolean): Option[MavenRepository] =
     None
-  def afterUpload(t: T): Task[Unit] =
+  def afterUpload(@unused t: T): Task[Unit] =
     Task.point(())
 
 }

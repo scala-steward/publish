@@ -23,7 +23,7 @@ object Download {
     final class HttpError(
       url: String,
       code: Int,
-      headers: Map[String, Seq[String]],
+      val headers: Map[String, Seq[String]],
       response: String
     ) extends Error(transient = code / 100 == 5, s"$url: HTTP $code\n$response")
     final class Unauthorized(url: String, realm: Option[String])
